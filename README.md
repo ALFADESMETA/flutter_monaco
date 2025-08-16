@@ -30,14 +30,18 @@ A Flutter plugin for integrating the Monaco Editor (VS Code's editor) into Flutt
 
 <table>
   <tr>
-    <td align="center"><b>Windows</b></td>
-    <td align="center"><b>iOS</b></td>
-    <td align="center"><b>Android</b></td>
+    <td align="center" colspan="2"><b>Windows</b></td>
   </tr>
   <tr>
-    <td><img src="https://github.com/omar-hanafy/flutter_monaco/blob/main/screenshots/windows.png?raw=true" alt="Windows Screenshot"></td>
-    <td><img src="https://github.com/omar-hanafy/flutter_monaco/blob/main/screenshots/ios.jpg?raw=true" alt="iOS Screenshot"></td>
-    <td><img src="https://github.com/omar-hanafy/flutter_monaco/blob/main/screenshots/android.jpg?raw=true" alt="Android Screenshot"></td>
+    <td colspan="2"><img src="https://github.com/omar-hanafy/flutter_monaco/blob/main/screenshots/windows.png?raw=true" alt="Windows Screenshot" width="100%"></td>
+  </tr>
+  <tr>
+    <td align="center" width="50%"><b>iOS</b></td>
+    <td align="center" width="50%"><b>Android</b></td>
+  </tr>
+  <tr>
+    <td><img src="https://github.com/omar-hanafy/flutter_monaco/blob/main/screenshots/ios.jpg?raw=true" alt="iOS Screenshot" width="100%"></td>
+    <td><img src="https://github.com/omar-hanafy/flutter_monaco/blob/main/screenshots/android.jpg?raw=true" alt="Android Screenshot" width="100%"></td>
   </tr>
 </table>
 
