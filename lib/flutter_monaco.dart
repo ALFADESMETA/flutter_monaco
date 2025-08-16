@@ -1,22 +1,22 @@
 /// A Flutter plugin for integrating the Monaco Editor into Flutter applications.
-/// 
+///
 /// Flutter Monaco provides a full-featured code editor powered by the same engine
 /// that drives Visual Studio Code. It supports syntax highlighting for 100+ languages,
 /// multiple themes, and a comprehensive API for editor manipulation.
-/// 
+///
 /// ## Features
-/// 
+///
 /// - **100+ Language Support** - Syntax highlighting for all major programming languages
 /// - **Multiple Themes** - VS Light, VS Dark, High Contrast themes
 /// - **Rich API** - Full programmatic control over the editor
 /// - **Multi-Editor Support** - Run multiple independent editor instances
 /// - **Cross-Platform** - Works on Android, iOS, macOS, and Windows
-/// 
+///
 /// ## Quick Start
-/// 
+///
 /// ```dart
 /// import 'package:flutter_monaco/flutter_monaco.dart';
-/// 
+///
 /// // Simple usage with the widget
 /// MonacoEditor(
 ///   options: EditorOptions(
@@ -24,7 +24,7 @@
 ///     theme: MonacoTheme.vsDark,
 ///   ),
 /// )
-/// 
+///
 /// // Advanced usage with controller
 /// final controller = await MonacoController.create(
 ///   options: EditorOptions(
@@ -32,22 +32,22 @@
 ///     fontSize: 16,
 ///   ),
 /// );
-/// 
+///
 /// await controller.setValue('print("Hello, World!")');
 /// final content = await controller.getValue();
 /// ```
-/// 
+///
 /// ## Platform Support
-/// 
+///
 /// - ✅ Android (5.0+)
 /// - ✅ iOS (11.0+)
 /// - ✅ macOS (10.13+)
 /// - ✅ Windows (10 version 1809+)
 /// - ❌ Web (not supported)
 /// - ❌ Linux (not supported)
-/// 
+///
 /// ## Additional Resources
-/// 
+///
 /// - [GitHub Repository](https://github.com/omar-hanafy/flutter_monaco)
 /// - [API Documentation](https://pub.dev/documentation/flutter_monaco/latest/)
 /// - [Example App](https://github.com/omar-hanafy/flutter_monaco/tree/main/example)

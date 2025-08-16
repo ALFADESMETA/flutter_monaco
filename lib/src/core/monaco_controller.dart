@@ -199,7 +199,6 @@ class MonacoController {
     await controller.flutterController.loadFile(htmlFilePath);
   }
 
-
   /// Get the platform-specific WebView widget
   /// Supports: Windows (WebView2), macOS/iOS (WKWebView), Linux (WebKitGTK)
   Widget get webViewWidget {
