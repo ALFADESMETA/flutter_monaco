@@ -7,7 +7,7 @@
 A Flutter plugin for integrating the Monaco Editor (VS Code's editor) into Flutter applications via WebView.
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/omar-hanafy/flutter_monaco/refs/heads/main/screenshots/macos.png" alt="Flutter Monaco Editor on macOS" width="90%">
+  <img src="https://github.com/omar-hanafy/flutter_monaco/blob/main/screenshots/macos.png?raw=true" alt="Flutter Monaco Editor on macOS" width="90%">
 </p>
 
 ## Features
@@ -35,9 +35,9 @@ A Flutter plugin for integrating the Monaco Editor (VS Code's editor) into Flutt
     <td align="center"><b>Android</b></td>
   </tr>
   <tr>
-    <td><img src="https://raw.githubusercontent.com/omar-hanafy/flutter_monaco/refs/heads/main/screenshots/windows.png" alt="Windows Screenshot"></td>
-    <td><img src="https://raw.githubusercontent.com/omar-hanafy/flutter_monaco/refs/heads/main/screenshots/ios.jpg" alt="iOS Screenshot"></td>
-    <td><img src="https://raw.githubusercontent.com/omar-hanafy/flutter_monaco/refs/heads/main/screenshots/android.jpg" alt="Android Screenshot"></td>
+    <td><img src="https://github.com/omar-hanafy/flutter_monaco/blob/main/screenshots/windows.png?raw=true" alt="Windows Screenshot"></td>
+    <td><img src="https://github.com/omar-hanafy/flutter_monaco/blob/main/screenshots/ios.jpg?raw=true" alt="iOS Screenshot"></td>
+    <td><img src="https://github.com/omar-hanafy/flutter_monaco/blob/main/screenshots/android.jpg?raw=true" alt="Android Screenshot"></td>
   </tr>
 </table>
 

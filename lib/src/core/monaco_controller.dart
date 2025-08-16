@@ -199,33 +199,21 @@ class MonacoController {
     await controller.flutterController.loadFile(htmlFilePath);
   }
 
-  // Store focus node for the WebView
-  final FocusNode _focusNode = FocusNode();
 
   /// Get the platform-specific WebView widget
   /// Supports: Windows (WebView2), macOS/iOS (WKWebView), Linux (WebKitGTK)
   Widget get webViewWidget {
-    Widget webView;
     if (Platform.isWindows) {
-      webView = ww.Webview(
+      return ww.Webview(
         (_webViewController as WindowsWebViewController).windowsController,
       );
     } else {
       // macOS, iOS use webview_flutter
-      webView = wf.WebViewWidget(
+      return wf.WebViewWidget(
         controller:
             (_webViewController as FlutterWebViewController).flutterController,
       );
     }
-
-    // Wrap in Focus widget to enable programmatic focus
-    return Focus(
-      focusNode: _focusNode,
-      child: GestureDetector(
-        onTap: _focusNode.requestFocus,
-        child: webView,
-      ),
-    );
   }
 
   /// Ensure the editor is ready before executing commands
@@ -280,10 +268,7 @@ class MonacoController {
   Future<void> focus() async {
     await _ensureReady();
 
-    // First focus the Flutter widget wrapper
-    _focusNode.requestFocus();
-
-    // Then focus the Monaco editor inside the WebView
+    // Focus the Monaco editor inside the WebView
     await _webViewController.runJavaScript('flutterMonaco.focus()');
 
     // Try to force focus with additional methods
@@ -897,7 +882,6 @@ class MonacoController {
     _onSelectionChanged.close();
     _onFocus.close();
     _onBlur.close();
-    _focusNode.dispose();
     _bridge.dispose();
     _webViewController.dispose();
   }
