@@ -51,7 +51,7 @@ Add `flutter_monaco` to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  flutter_monaco: ^1.0.0
+  flutter_monaco: ^0.1.0
 ```
 
 ## Quick Start
