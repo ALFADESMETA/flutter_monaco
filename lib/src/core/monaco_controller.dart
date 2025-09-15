@@ -2,8 +2,8 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dart_helper_utils/dart_helper_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_helper_utils/flutter_helper_utils.dart';
 import 'package:flutter_monaco/src/core/monaco_assets.dart';
 import 'package:flutter_monaco/src/core/monaco_bridge.dart';
 import 'package:flutter_monaco/src/models/editor_options.dart';
@@ -200,7 +200,7 @@ class MonacoController {
   }
 
   /// Get the platform-specific WebView widget
-  /// Supports: Windows (WebView2), macOS/iOS (WKWebView), Linux (WebKitGTK)
+  /// Supported: Windows (WebView2), macOS/iOS (WKWebView)
   Widget get webViewWidget {
     if (Platform.isWindows) {
       return ww.Webview(
@@ -266,29 +266,30 @@ class MonacoController {
   /// Request focus on the editor
   Future<void> focus() async {
     await _ensureReady();
+    // Use robust in-page helper (waits for visibility, layouts, focuses textarea)
+    await _webViewController.runJavaScript(
+        'window.flutterMonaco && window.flutterMonaco.forceFocus && window.flutterMonaco.forceFocus()');
+  }
 
-    // Focus the Monaco editor inside the WebView
-    await _webViewController.runJavaScript('flutterMonaco.focus()');
-
-    // Try to force focus with additional methods
-    await _webViewController.runJavaScript('''
-      // Ensure Monaco has focus
-      if (window.editor) {
-        const container = window.editor.getContainerDomNode();
-        if (container) {
-          // Try multiple focus methods
-          container.focus();
-          window.editor.focus();
-          
-          // Set cursor to make it visible
-          const model = window.editor.getModel();
-          if (model) {
-            window.editor.setPosition({ lineNumber: 1, column: 1 });
-            window.editor.revealLine(1);
-          }
-        }
+  /// Robust focus with retries across a few frames to survive layout transitions
+  Future<void> ensureEditorFocus({int attempts = 3, Duration interval = const Duration(milliseconds: 24)}) async {
+    await _ensureReady();
+    for (var i = 0; i < attempts; i++) {
+      try {
+        await _webViewController.runJavaScript(
+            'window.flutterMonaco && window.flutterMonaco.forceFocus && window.flutterMonaco.forceFocus()');
+      } catch (_) {}
+      if (i + 1 < attempts) {
+        await Future.delayed(interval);
       }
-    ''');
+    }
+  }
+
+  /// Request a layout pass inside Monaco
+  Future<void> layout() async {
+    await _ensureReady();
+    await _webViewController.runJavaScript(
+        'window.flutterMonaco && window.flutterMonaco.layout && window.flutterMonaco.layout()');
   }
 
   /// Scroll to top of the editor
@@ -373,6 +374,8 @@ class MonacoController {
           _onFocus.add(null);
         case 'blur':
           _onBlur.add(null);
+        default:
+          break;
       }
     });
   }

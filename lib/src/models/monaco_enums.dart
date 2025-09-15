@@ -1,7 +1,5 @@
 /// Type-safe enums for Monaco Editor configuration
 /// Provides compile-time safety while maintaining backward compatibility
-library;
-
 /// Monaco Editor themes
 enum MonacoTheme {
   vs('vs', 'Light'),

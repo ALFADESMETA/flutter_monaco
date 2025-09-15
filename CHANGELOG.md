@@ -3,6 +3,12 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.0] - 2025-09-15
+- Reliable typing after route/app switches on macOS/Windows — no right‑click needed.
+- Optional `MonacoFocusGuard` to auto‑restore focus on resume/route return.
+- New guide: docs/focus-and-platform-views.md with best practices and snippets.
+- Sensible defaults: word wrap ON, minimap OFF, consistent across APIs.
+
 ## [0.1.0] - 2025-08-16
 
 ### Initial Release 🎉

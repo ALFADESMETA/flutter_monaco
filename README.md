@@ -51,7 +51,7 @@ Add `flutter_monaco` to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  flutter_monaco: ^0.1.0
+  flutter_monaco: ^<latest version>
 ```
 
 ## Quick Start
@@ -484,6 +484,23 @@ controller.onBlur.listen((_) { });
 When using markers (diagnostics), the `clearAllMarkers()` method only clears markers from known owners ('flutter', 'flutter-errors', 'flutter-warnings'). Custom owners must be tracked and cleared separately.
 
 ## Troubleshooting
+
+If you are seeing issues where the editor loses keyboard focus after navigating away and back, or after switching apps on macOS/Windows, see the comprehensive guide:
+
+- Focus, First Responder, and Keyboard on Platform Views (macOS/Windows): docs/focus-and-platform-views.md
+
+### Desktop Focus Helper (optional)
+For apps that frequently switch routes or windows, you can drop in a tiny helper to reassert focus automatically:
+
+```dart
+// Once you have a MonacoController instance
+MonacoFocusGuard(
+  controller: controller,
+  // optionally provide a RouteObserver to re-focus on route return
+  // routeObserver: myRouteObserver,
+);
+```
+See the guide above for details and best practices.
 
 ### Windows: WebView2 not found
 If you get a WebView2 error on Windows, install the WebView2 Runtime:

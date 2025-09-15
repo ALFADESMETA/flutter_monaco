@@ -1,6 +1,6 @@
 name: flutter_monaco
 description: Integrate Monaco Editor (VS Code's editor) in Flutter apps. Features 100+ languages, syntax highlighting, themes, and full API.
-version: 0.1.0
+version: 1.0.0
 homepage: https://github.com/omar-hanafy/flutter_monaco
 repository: https://github.com/omar-hanafy/flutter_monaco
 issue_tracker: https://github.com/omar-hanafy/flutter_monaco/issues
@@ -23,7 +23,7 @@ platforms:
 
 environment:
   sdk: '>=3.0.0 <4.0.0'
-  flutter: ">=3.0.0"
+  flutter: ">=3.16.0"
 
 dependencies:
   flutter:
@@ -32,7 +32,7 @@ dependencies:
   # WebView packages for different platforms
   webview_flutter: ^4.13.0
   webview_windows: ^0.4.0
-  dart_helper_utils: ^5.2.2
+  flutter_helper_utils: ^8.3.0
 
   # Utilities
   path: ^1.9.1
@@ -40,20 +40,26 @@ dependencies:
   
   # For JSON serialization
   freezed_annotation: ^3.1.0
-  freezed: ^3.2.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   very_good_analysis: ^9.0.0
-  build_runner: ^2.7.0
+  build_runner: ^2.8.0
+  freezed: ^3.2.3
+  custom_lint: ^0.8.1
 
 flutter:
   assets:
-    # everything that lives directly under assets/monaco
-    - assets/monaco/
+    # Adding a trailing slash (e.g. assets/images/) only includes the files 
+    # directly inside that directory. It does NOT include subdirectories 
+    # or their contents. 
+    #
+    # Flutter does not support recursive asset inclusion. If you have 
+    # nested directories and want to include their assets as well, you must 
+    # list each subdirectory manually.
 
-    # ─── monaco-editor root & its top-level files ───
+    # everything that lives directly under assets/monaco
     - assets/monaco/
 
     # ─── min tree (first level) ───

@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_helper_utils/flutter_helper_utils.dart';
 import 'package:flutter_monaco/flutter_monaco.dart';
 
 /// An enumeration representing the connection state of the Monaco Editor.
@@ -201,6 +203,7 @@ class _MonacoEditorState extends State<MonacoEditor> {
 
   /// Subscriptions to controller events to be managed across the widget lifecycle.
   final List<StreamSubscription<dynamic>> _streamSubscriptions = [];
+  StreamSubscription<bool>? _contentSub;
   VoidCallback? _statsListener;
 
   /// Content sequence number for race condition prevention.
@@ -208,6 +211,9 @@ class _MonacoEditorState extends State<MonacoEditor> {
 
   /// Timer for debouncing content changes.
   Timer? _contentDebounceTimer;
+
+  /// FocusNode to explicitly request platform view focus for the WebView.
+  final FocusNode _webFocusNode = FocusNode(debugLabel: 'MonacoWebViewFocus');
 
   @override
   void initState() {
@@ -286,7 +292,13 @@ class _MonacoEditorState extends State<MonacoEditor> {
         await _controller!.setSelection(widget.initialSelection!);
       }
       if (widget.autofocus) {
-        unawaited(_controller!.focus());
+        // Defer to next frame to ensure visibility, request Flutter focus, and then enforce Monaco focus
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (!mounted) return;
+          _webFocusNode.requestFocus();
+          // Retry a few times to survive competing focus layout
+          unawaited(_controller!.ensureEditorFocus(attempts: 3));
+        });
       }
 
       _wireListeners();
@@ -314,11 +326,15 @@ class _MonacoEditorState extends State<MonacoEditor> {
     _teardownListeners();
 
     _wireContentListener();
-    _streamSubscriptions.addAll([
-      _controller!.onSelectionChanged.listen(widget.onSelectionChanged),
-      _controller!.onFocus.listen((_) => widget.onFocus?.call()),
-      _controller!.onBlur.listen((_) => widget.onBlur?.call()),
-    ]);
+    if (widget.onSelectionChanged != null) {
+      final selectionSub = _controller!.onSelectionChanged
+          .listen((r) => widget.onSelectionChanged?.call(r));
+      _streamSubscriptions.add(selectionSub);
+    }
+    final focusSub = _controller!.onFocus.listen((_) => widget.onFocus?.call());
+    _streamSubscriptions.add(focusSub);
+    final blurSub = _controller!.onBlur.listen((_) => widget.onBlur?.call());
+    _streamSubscriptions.add(blurSub);
 
     _statsListener =
         () => widget.onLiveStats?.call(_controller!.liveStats.value);
@@ -327,17 +343,11 @@ class _MonacoEditorState extends State<MonacoEditor> {
 
   /// Wires only the content changed listener, allowing it to be updated separately.
   void _wireContentListener() {
-    // Find and cancel the old content subscription if it exists.
-    final oldSub = _streamSubscriptions
-        .whereType<StreamSubscription<bool>>()
-        .cast<StreamSubscription<bool>?>()
-        .firstOrNull;
-    if (oldSub != null) {
-      _streamSubscriptions.remove(oldSub);
-      oldSub.cancel();
-    }
+    // Cancel any previous content subscription first.
+    _contentSub?.cancel();
+    _contentSub = null;
 
-    final sub = _controller!.onContentChanged.listen((isFlush) async {
+    _contentSub = _controller!.onContentChanged.listen((isFlush) async {
       // 1) Always surface raw signal if requested.
       widget.onRawContentChanged?.call(isFlush);
 
@@ -362,7 +372,6 @@ class _MonacoEditorState extends State<MonacoEditor> {
       _contentDebounceTimer?.cancel();
       _contentDebounceTimer = Timer(widget.contentDebounce, pullAndEmit);
     });
-    _streamSubscriptions.add(sub);
   }
 
   /// Cancels all active event subscriptions.
@@ -371,6 +380,9 @@ class _MonacoEditorState extends State<MonacoEditor> {
       sub.cancel();
     }
     _streamSubscriptions.clear();
+
+    _contentSub?.cancel();
+    _contentSub = null;
 
     _contentDebounceTimer?.cancel();
     _contentDebounceTimer = null;
@@ -393,7 +405,7 @@ class _MonacoEditorState extends State<MonacoEditor> {
   @override
   Widget build(BuildContext context) {
     final bg = widget.backgroundColor ??
-        (Theme.of(context).brightness == Brightness.dark
+        (context.themeData.brightness == Brightness.dark
             ? const Color(0xFF1E1E1E)
             : Colors.white);
 
@@ -419,7 +431,34 @@ class _MonacoEditorState extends State<MonacoEditor> {
             );
 
       case _ConnectionState.ready:
-        final webView = SizedBox.expand(child: _controller!.webViewWidget);
+        final webView = SizedBox.expand(
+          child: Focus(
+            focusNode: _webFocusNode,
+            canRequestFocus: true,
+            autofocus: widget.autofocus,
+            onKeyEvent: (node, event) {
+              // Forward key events to the native platform view (WKWebView/WebView2)
+              if (event is KeyDownEvent) {
+                return KeyEventResult.skipRemainingHandlers;
+              }
+              return KeyEventResult.ignored;
+            },
+            child: Listener(
+              // Let the native WKWebView/WebView2 also receive the click.
+              behavior: HitTestBehavior.translucent,
+              onPointerDown: (_) {
+                if (!_webFocusNode.hasFocus) {
+                  _webFocusNode.requestFocus();
+                }
+                if (_controller != null) {
+                  // Encourage DOM focus to land on Monaco's textarea promptly.
+                  unawaited(_controller!.ensureEditorFocus(attempts: 1));
+                }
+              },
+              child: _controller!.webViewWidget,
+            ),
+          ),
+        );
         final showBar = widget.showStatusBar || widget.statusBarBuilder != null;
 
         if (!showBar) {
@@ -446,6 +485,7 @@ class _MonacoEditorState extends State<MonacoEditor> {
 
   @override
   void dispose() {
+    _webFocusNode.dispose();
     _teardown(disposeOldController: _ownsController);
     super.dispose();
   }
@@ -463,7 +503,7 @@ class _MonacoStatusBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final theme = context.themeData;
     final style = theme.textTheme.bodySmall ?? const TextStyle(fontSize: 12);
 
     return ValueListenableBuilder<LiveStats>(
@@ -482,7 +522,7 @@ class _MonacoStatusBar extends StatelessWidget {
         return Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
           decoration: BoxDecoration(
-            color: theme.colorScheme.surface.withValues(alpha: 0.95),
+            color: theme.colorScheme.surface.setOpacity(0.95),
             border:
                 Border(top: BorderSide(color: theme.dividerColor, width: 0.5)),
           ),
@@ -523,7 +563,7 @@ class _DefaultError extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final theme = context.themeData;
     final style = theme.textTheme.bodyMedium;
 
     return Center(

@@ -46,8 +46,8 @@ void main() {
       const options = EditorOptions();
       expect(options.fontSize, 14);
       expect(options.tabSize, 4);
-      expect(options.wordWrap, false);
-      expect(options.minimap, true);
+      expect(options.wordWrap, true);
+      expect(options.minimap, false);
       expect(options.lineNumbers, true);
     });
 

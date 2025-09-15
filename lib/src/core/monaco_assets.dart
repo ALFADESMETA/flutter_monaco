@@ -302,17 +302,21 @@ class MonacoAssets {
     try { absVs = new URL(vsRel, window.location.href).toString(); }
     catch (_) { absVs = vsRel; }
 
-    const baseUrl = absVs.replace(/\\/vs\\/?\$/, '/'); // e.g., ".../min/"
-    // Set baseUrl on the main thread so Monaco can resolve URLs before workers start
-    self.MonacoEnvironment = { baseUrl: baseUrl };
+    // Ensure baseUrl points to the ".../min/" folder (not ".../min/vs")
+    const idx = absVs.lastIndexOf('/vs');
+    const baseUrl = idx >= 0 ? absVs.substring(0, idx + 1) : absVs; // e.g., ".../min/"
 
-    // Blob worker shim: workers import from ABSOLUTE vs path
-    self.MonacoEnvironment.getWorkerUrl = function (moduleId, label) {
-      const src = `
-        self.MonacoEnvironment = { baseUrl: '\${baseUrl}' };
-        importScripts('\${absVs}/base/worker/workerMain.js');
-      `;
-      return URL.createObjectURL(new Blob([src], { type: 'application/javascript' }));
+    // Set baseUrl so Monaco can resolve URLs before workers start
+    self.MonacoEnvironment = {
+      baseUrl: baseUrl,
+      getWorkerUrl: function (moduleId, label) {
+        // Include the label for better worker resolution and debugging
+        const src =
+          "self.MonacoEnvironment = { baseUrl: '" + baseUrl + "' };\n" +
+          "self.monacoLabel = '" + label + "';\n" +
+          "importScripts('" + absVs + "/base/worker/workerMain.js');\n";
+        return URL.createObjectURL(new Blob([src], { type: 'application/javascript' }));
+      }
     };
     console.log('[Init] Worker shim configured. baseUrl=' + baseUrl);
   })();
@@ -440,6 +444,44 @@ class MonacoAssets {
                 window.flutterMonaco = {
                   // Basic editor operations
                   focus: () => E().focus(),
+                  layout: () => { try { E().layout(); } catch (_) {} },
+                  // Force focus robustly: wait for visibility, layout, focus editor and hidden textarea
+                  forceFocus: () => {
+                    try {
+                      const ed = E();
+                      if (!ed) return;
+                      const node = (ed.getDomNode && ed.getDomNode()) || (ed.getContainerDomNode && ed.getContainerDomNode());
+                      if (!node) return;
+                      const attempt = () => {
+                        const rect = node.getBoundingClientRect();
+                        if (!rect.width || !rect.height) {
+                          // Defer until container has size
+                          return requestAnimationFrame(attempt);
+                        }
+                        // Try to ensure the page/window is active (helps WKWebView on macOS)
+                        try { window.focus && window.focus(); } catch (_) {}
+                        try {
+                          if (document.body && !document.body.hasAttribute('tabindex')) {
+                            document.body.setAttribute('tabindex', '-1');
+                          }
+                          document.body?.focus?.();
+                        } catch (_) {}
+                        try { ed.layout && ed.layout(); } catch (_) {}
+                        try { ed.focus && ed.focus(); } catch (_) {}
+                        // Ensure the hidden textarea owns focus for keyboard input
+                        try {
+                          const ta = node.querySelector('textarea.inputarea');
+                          if (ta && document.activeElement !== ta) {
+                            ta.focus({ preventScroll: true });
+                            // One more tick for WKWebView
+                            setTimeout(() => { try { ta.focus({ preventScroll: true }); } catch (_) {} }, 16);
+                          }
+                        } catch (_) {}
+                      };
+                      // Defer past any mousedown handlers
+                      setTimeout(() => requestAnimationFrame(attempt), 0);
+                    } catch (_) {}
+                  },
                   getValue: () => E().getValue(),
                   setValue: (v) => E().setValue(v || ''),
                   setTheme: (theme) => monaco.editor.setTheme(theme),

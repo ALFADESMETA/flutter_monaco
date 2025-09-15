@@ -84,3 +84,4 @@ export 'src/models/monaco_types.dart'
         RelatedInformation;
 // Widget exports
 export 'src/widgets/monaco_editor_view.dart' show MonacoEditor;
+export 'src/widgets/monaco_focus_guard.dart' show MonacoFocusGuard;

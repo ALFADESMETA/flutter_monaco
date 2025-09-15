@@ -1,4 +1,4 @@
-import 'package:dart_helper_utils/dart_helper_utils.dart';
+import 'package:flutter_helper_utils/flutter_helper_utils.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'monaco_types.freezed.dart';
