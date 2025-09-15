@@ -487,7 +487,7 @@ When using markers (diagnostics), the `clearAllMarkers()` method only clears mar
 
 If you are seeing issues where the editor loses keyboard focus after navigating away and back, or after switching apps on macOS/Windows, see the comprehensive guide:
 
-- Focus, First Responder, and Keyboard on Platform Views (macOS/Windows): docs/focus-and-platform-views.md
+- Focus, First Responder, and Keyboard on Platform Views (macOS/Windows): doc/focus-and-platform-views.md
 
 ### Desktop Focus Helper (optional)
 For apps that frequently switch routes or windows, you can drop in a tiny helper to reassert focus automatically:

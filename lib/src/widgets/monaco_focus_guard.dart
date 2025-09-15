@@ -71,4 +71,3 @@ class _MonacoFocusGuardState extends State<MonacoFocusGuard>
   @override
   Widget build(BuildContext context) => const SizedBox.shrink();
 }
-

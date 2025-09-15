@@ -272,7 +272,9 @@ class MonacoController {
   }
 
   /// Robust focus with retries across a few frames to survive layout transitions
-  Future<void> ensureEditorFocus({int attempts = 3, Duration interval = const Duration(milliseconds: 24)}) async {
+  Future<void> ensureEditorFocus(
+      {int attempts = 3,
+      Duration interval = const Duration(milliseconds: 24)}) async {
     await _ensureReady();
     for (var i = 0; i < attempts; i++) {
       try {
@@ -280,7 +282,7 @@ class MonacoController {
             'window.flutterMonaco && window.flutterMonaco.forceFocus && window.flutterMonaco.forceFocus()');
       } catch (_) {}
       if (i + 1 < attempts) {
-        await Future.delayed(interval);
+        await Future<void>.delayed(interval);
       }
     }
   }
