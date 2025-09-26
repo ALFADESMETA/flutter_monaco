@@ -18,11 +18,11 @@ platforms:
   ios:
   macos:
   windows:
+  web:  # NOW SUPPORTED!
   # linux:   # Not yet supported (no webview support yet)
-  # web:     # Not supported (asset bundling limitation)
 
 environment:
-  sdk: '>=3.0.0 <4.0.0'
+  sdk: '>=3.3.0 <4.0.0'
   flutter: ">=3.16.0"
 
 dependencies:
@@ -36,10 +36,16 @@ dependencies:
 
   # Utilities
   path: ^1.9.1
-  path_provider: ^2.1.5
+  path_provider: ^2.1.4
   
   # For JSON serialization
   freezed_annotation: ^3.1.0
+  
+  # Web support (already present, just adding web plugin SDK)
+  web: ^1.1.1
+  js: ^0.7.2
+  flutter_web_plugins:
+    sdk: flutter
 
 dev_dependencies:
   flutter_test:
@@ -50,6 +56,13 @@ dev_dependencies:
   custom_lint: ^0.8.1
 
 flutter:
+  # Only web needs plugin registration (others use WebView directly)
+  plugin:
+    platforms:
+      web:
+        pluginClass: FlutterMonacoWeb
+        fileName: flutter_monaco_web.dart
+
   assets:
     # Adding a trailing slash (e.g. assets/images/) only includes the files 
     # directly inside that directory. It does NOT include subdirectories 

@@ -85,3 +85,4 @@ export 'src/models/monaco_types.dart'
 // Widget exports
 export 'src/widgets/monaco_editor_view.dart' show MonacoEditor;
 export 'src/widgets/monaco_focus_guard.dart' show MonacoFocusGuard;
+export 'src/widgets/flutterflow_monaco.dart';
