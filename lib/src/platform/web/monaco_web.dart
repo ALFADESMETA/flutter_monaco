@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:js_interop';
+import 'dart:ui_web' as ui_web;
 import 'package:flutter/widgets.dart';
 import 'package:web/web.dart' as web;
 import '../../models/editor_options.dart';
@@ -155,42 +156,53 @@ class MonacoWebWidget extends StatefulWidget {
 }
 
 class _MonacoWebWidgetState extends State<MonacoWebWidget> {
-  final String _containerId = 'monaco-editor-${DateTime.now().millisecondsSinceEpoch}';
+  final String _viewType = 'monaco-editor-${DateTime.now().millisecondsSinceEpoch}';
   JSMonacoEditorInstance? _editor;
+  bool _isRegistered = false;
 
   @override
   void initState() {
     super.initState();
-    _initializeEditor();
+    _registerViewFactory();
   }
 
-  Future<void> _initializeEditor() async {
-    if (MonacoWeb._monacoLoadCompleter != null) {
-      await MonacoWeb._monacoLoadCompleter!.future;
-    }
-    
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) {
-        _createEditor();
-      }
-    });
-  }
+  void _registerViewFactory() {
+    if (_isRegistered) return;
 
-  void _createEditor() {
     try {
-      // Create container in body with fixed positioning (fullscreen)
-      final container = web.document.createElement('div') as web.HTMLDivElement;
-      container.id = _containerId;
-      container.style.position = 'fixed';
-      container.style.top = '0';  // Fullscreen
-      container.style.left = '0';
-      container.style.right = '0';
-      container.style.bottom = '0';
-      container.style.zIndex = '1';
-      web.document.body!.appendChild(container);
+      // Register the view factory for HtmlElementView
+      ui_web.platformViewRegistry.registerViewFactory(
+        _viewType,
+        (int viewId) {
+          // Create container that respects parent size
+          final container = web.document.createElement('div') as web.HTMLDivElement;
+          container.id = 'monaco-container-$viewId';
+          container.style.width = '100%';
+          container.style.height = '100%';
+          container.style.position = 'relative';
+          container.style.overflow = 'hidden';
+          
+          // Initialize Monaco after a brief delay to ensure DOM is ready
+          Future.delayed(const Duration(milliseconds: 100), () {
+            if (mounted) {
+              _createEditor(container);
+            }
+          });
+          
+          return container;
+        },
+      );
+      
+      _isRegistered = true;
+    } catch (e) {
+      debugPrint('[Monaco] Error registering view factory: $e');
+    }
+  }
 
+  void _createEditor(web.HTMLDivElement container) {
+    try {
       final options = {
-        'value': '// Monaco Editor for Web\nconsole.log("Hello from Monaco!");',
+        'value': widget.options.initialValue ?? '// Monaco Editor for Web\nconsole.log("Hello from Monaco!");',
         'language': widget.options.language.id,
         'theme': _getThemeId(widget.options.theme),
         'automaticLayout': true,
@@ -246,15 +258,15 @@ class _MonacoWebWidgetState extends State<MonacoWebWidget> {
 
   @override
   Widget build(BuildContext context) {
-    // Monaco is rendered outside Flutter's render tree
-    return const SizedBox.expand();
+    // Return HtmlElementView that respects parent container size
+    return HtmlElementView(
+      viewType: _viewType,
+    );
   }
 
   @override
   void dispose() {
     _editor?.dispose();
-    final container = web.document.getElementById(_containerId);
-    container?.remove();
     super.dispose();
   }
 }

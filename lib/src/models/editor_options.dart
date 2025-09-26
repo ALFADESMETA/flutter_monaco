@@ -46,6 +46,7 @@ sealed class EditorOptions with _$EditorOptions {
     @Default(false) bool renderControlCharacters,
     @Default(false) bool disableLayerHinting,
     @Default(false) bool disableMonospaceOptimizations,
+    String? initialValue,
   }) = _EditorOptions;
 
   const EditorOptions._();
@@ -103,6 +104,7 @@ sealed class EditorOptions with _$EditorOptions {
           json.getBool('disableLayerHinting', defaultValue: false),
       disableMonospaceOptimizations:
           json.getBool('disableMonospaceOptimizations', defaultValue: false),
+      initialValue: json.tryGetString('initialValue'),
     );
   }
 
@@ -143,6 +145,7 @@ sealed class EditorOptions with _$EditorOptions {
       'renderControlCharacters': renderControlCharacters,
       'disableLayerHinting': disableLayerHinting,
       'disableMonospaceOptimizations': disableMonospaceOptimizations,
+      if (initialValue != null) 'value': initialValue,
     };
   }
 }

@@ -50,6 +50,7 @@ mixin _$EditorOptions {
   bool get renderControlCharacters;
   bool get disableLayerHinting;
   bool get disableMonospaceOptimizations;
+  String? get initialValue;
 
   /// Create a copy of EditorOptions
   /// with the given fields replaced by the non-null parameter values.
@@ -97,8 +98,7 @@ mixin _$EditorOptions {
                 other.cursorStyle == cursorStyle) &&
             (identical(other.renderWhitespace, renderWhitespace) ||
                 other.renderWhitespace == renderWhitespace) &&
-            (identical(
-                    other.bracketPairColorization, bracketPairColorization) ||
+            (identical(other.bracketPairColorization, bracketPairColorization) ||
                 other.bracketPairColorization == bracketPairColorization) &&
             (identical(other.autoClosingBrackets, autoClosingBrackets) ||
                 other.autoClosingBrackets == autoClosingBrackets) &&
@@ -133,7 +133,9 @@ mixin _$EditorOptions {
             (identical(other.disableMonospaceOptimizations,
                     disableMonospaceOptimizations) ||
                 other.disableMonospaceOptimizations ==
-                    disableMonospaceOptimizations));
+                    disableMonospaceOptimizations) &&
+            (identical(other.initialValue, initialValue) ||
+                other.initialValue == initialValue));
   }
 
   @override
@@ -174,12 +176,13 @@ mixin _$EditorOptions {
         overviewRulerBorder,
         renderControlCharacters,
         disableLayerHinting,
-        disableMonospaceOptimizations
+        disableMonospaceOptimizations,
+        initialValue
       ]);
 
   @override
   String toString() {
-    return 'EditorOptions(language: $language, theme: $theme, fontSize: $fontSize, fontFamily: $fontFamily, lineHeight: $lineHeight, wordWrap: $wordWrap, minimap: $minimap, lineNumbers: $lineNumbers, rulers: $rulers, tabSize: $tabSize, insertSpaces: $insertSpaces, readOnly: $readOnly, automaticLayout: $automaticLayout, padding: $padding, scrollBeyondLastLine: $scrollBeyondLastLine, smoothScrolling: $smoothScrolling, cursorBlinking: $cursorBlinking, cursorStyle: $cursorStyle, renderWhitespace: $renderWhitespace, bracketPairColorization: $bracketPairColorization, autoClosingBrackets: $autoClosingBrackets, autoClosingQuotes: $autoClosingQuotes, formatOnPaste: $formatOnPaste, formatOnType: $formatOnType, quickSuggestions: $quickSuggestions, fontLigatures: $fontLigatures, parameterHints: $parameterHints, hover: $hover, contextMenu: $contextMenu, mouseWheelZoom: $mouseWheelZoom, roundedSelection: $roundedSelection, selectionHighlight: $selectionHighlight, overviewRulerBorder: $overviewRulerBorder, renderControlCharacters: $renderControlCharacters, disableLayerHinting: $disableLayerHinting, disableMonospaceOptimizations: $disableMonospaceOptimizations)';
+    return 'EditorOptions(language: $language, theme: $theme, fontSize: $fontSize, fontFamily: $fontFamily, lineHeight: $lineHeight, wordWrap: $wordWrap, minimap: $minimap, lineNumbers: $lineNumbers, rulers: $rulers, tabSize: $tabSize, insertSpaces: $insertSpaces, readOnly: $readOnly, automaticLayout: $automaticLayout, padding: $padding, scrollBeyondLastLine: $scrollBeyondLastLine, smoothScrolling: $smoothScrolling, cursorBlinking: $cursorBlinking, cursorStyle: $cursorStyle, renderWhitespace: $renderWhitespace, bracketPairColorization: $bracketPairColorization, autoClosingBrackets: $autoClosingBrackets, autoClosingQuotes: $autoClosingQuotes, formatOnPaste: $formatOnPaste, formatOnType: $formatOnType, quickSuggestions: $quickSuggestions, fontLigatures: $fontLigatures, parameterHints: $parameterHints, hover: $hover, contextMenu: $contextMenu, mouseWheelZoom: $mouseWheelZoom, roundedSelection: $roundedSelection, selectionHighlight: $selectionHighlight, overviewRulerBorder: $overviewRulerBorder, renderControlCharacters: $renderControlCharacters, disableLayerHinting: $disableLayerHinting, disableMonospaceOptimizations: $disableMonospaceOptimizations, initialValue: $initialValue)';
   }
 }
 
@@ -225,7 +228,8 @@ abstract mixin class $EditorOptionsCopyWith<$Res> {
       bool overviewRulerBorder,
       bool renderControlCharacters,
       bool disableLayerHinting,
-      bool disableMonospaceOptimizations});
+      bool disableMonospaceOptimizations,
+      String? initialValue});
 }
 
 /// @nodoc
@@ -277,6 +281,7 @@ class _$EditorOptionsCopyWithImpl<$Res>
     Object? renderControlCharacters = null,
     Object? disableLayerHinting = null,
     Object? disableMonospaceOptimizations = null,
+    Object? initialValue = freezed,
   }) {
     return _then(_self.copyWith(
       language: null == language
@@ -423,6 +428,10 @@ class _$EditorOptionsCopyWithImpl<$Res>
           ? _self.disableMonospaceOptimizations
           : disableMonospaceOptimizations // ignore: cast_nullable_to_non_nullable
               as bool,
+      initialValue: freezed == initialValue
+          ? _self.initialValue
+          : initialValue // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -554,7 +563,8 @@ extension EditorOptionsPatterns on EditorOptions {
             bool overviewRulerBorder,
             bool renderControlCharacters,
             bool disableLayerHinting,
-            bool disableMonospaceOptimizations)?
+            bool disableMonospaceOptimizations,
+            String? initialValue)?
         $default, {
     required TResult orElse(),
   }) {
@@ -597,7 +607,8 @@ extension EditorOptionsPatterns on EditorOptions {
             _that.overviewRulerBorder,
             _that.renderControlCharacters,
             _that.disableLayerHinting,
-            _that.disableMonospaceOptimizations);
+            _that.disableMonospaceOptimizations,
+            _that.initialValue);
       case _:
         return orElse();
     }
@@ -654,7 +665,8 @@ extension EditorOptionsPatterns on EditorOptions {
             bool overviewRulerBorder,
             bool renderControlCharacters,
             bool disableLayerHinting,
-            bool disableMonospaceOptimizations)
+            bool disableMonospaceOptimizations,
+            String? initialValue)
         $default,
   ) {
     final _that = this;
@@ -696,7 +708,8 @@ extension EditorOptionsPatterns on EditorOptions {
             _that.overviewRulerBorder,
             _that.renderControlCharacters,
             _that.disableLayerHinting,
-            _that.disableMonospaceOptimizations);
+            _that.disableMonospaceOptimizations,
+            _that.initialValue);
     }
   }
 
@@ -750,7 +763,8 @@ extension EditorOptionsPatterns on EditorOptions {
             bool overviewRulerBorder,
             bool renderControlCharacters,
             bool disableLayerHinting,
-            bool disableMonospaceOptimizations)?
+            bool disableMonospaceOptimizations,
+            String? initialValue)?
         $default,
   ) {
     final _that = this;
@@ -792,7 +806,8 @@ extension EditorOptionsPatterns on EditorOptions {
             _that.overviewRulerBorder,
             _that.renderControlCharacters,
             _that.disableLayerHinting,
-            _that.disableMonospaceOptimizations);
+            _that.disableMonospaceOptimizations,
+            _that.initialValue);
       case _:
         return null;
     }
@@ -803,7 +818,7 @@ extension EditorOptionsPatterns on EditorOptions {
 
 class _EditorOptions extends EditorOptions {
   const _EditorOptions(
-      {this.language = MonacoLanguage.markdown,
+      {this.language = MonacoLanguage.dart,
       this.theme = MonacoTheme.vsDark,
       this.fontSize = 14,
       this.fontFamily = 'Consolas, "Courier New", monospace',
@@ -838,7 +853,8 @@ class _EditorOptions extends EditorOptions {
       this.overviewRulerBorder = true,
       this.renderControlCharacters = false,
       this.disableLayerHinting = false,
-      this.disableMonospaceOptimizations = false})
+      this.disableMonospaceOptimizations = false,
+      this.initialValue})
       : _rulers = rulers,
         _padding = padding,
         super._();
@@ -964,6 +980,8 @@ class _EditorOptions extends EditorOptions {
   @override
   @JsonKey()
   final bool disableMonospaceOptimizations;
+  @override
+  final String? initialValue;
 
   /// Create a copy of EditorOptions
   /// with the given fields replaced by the non-null parameter values.
@@ -1011,8 +1029,7 @@ class _EditorOptions extends EditorOptions {
                 other.cursorStyle == cursorStyle) &&
             (identical(other.renderWhitespace, renderWhitespace) ||
                 other.renderWhitespace == renderWhitespace) &&
-            (identical(
-                    other.bracketPairColorization, bracketPairColorization) ||
+            (identical(other.bracketPairColorization, bracketPairColorization) ||
                 other.bracketPairColorization == bracketPairColorization) &&
             (identical(other.autoClosingBrackets, autoClosingBrackets) ||
                 other.autoClosingBrackets == autoClosingBrackets) &&
@@ -1047,7 +1064,9 @@ class _EditorOptions extends EditorOptions {
             (identical(other.disableMonospaceOptimizations,
                     disableMonospaceOptimizations) ||
                 other.disableMonospaceOptimizations ==
-                    disableMonospaceOptimizations));
+                    disableMonospaceOptimizations) &&
+            (identical(other.initialValue, initialValue) ||
+                other.initialValue == initialValue));
   }
 
   @override
@@ -1088,12 +1107,13 @@ class _EditorOptions extends EditorOptions {
         overviewRulerBorder,
         renderControlCharacters,
         disableLayerHinting,
-        disableMonospaceOptimizations
+        disableMonospaceOptimizations,
+        initialValue
       ]);
 
   @override
   String toString() {
-    return 'EditorOptions(language: $language, theme: $theme, fontSize: $fontSize, fontFamily: $fontFamily, lineHeight: $lineHeight, wordWrap: $wordWrap, minimap: $minimap, lineNumbers: $lineNumbers, rulers: $rulers, tabSize: $tabSize, insertSpaces: $insertSpaces, readOnly: $readOnly, automaticLayout: $automaticLayout, padding: $padding, scrollBeyondLastLine: $scrollBeyondLastLine, smoothScrolling: $smoothScrolling, cursorBlinking: $cursorBlinking, cursorStyle: $cursorStyle, renderWhitespace: $renderWhitespace, bracketPairColorization: $bracketPairColorization, autoClosingBrackets: $autoClosingBrackets, autoClosingQuotes: $autoClosingQuotes, formatOnPaste: $formatOnPaste, formatOnType: $formatOnType, quickSuggestions: $quickSuggestions, fontLigatures: $fontLigatures, parameterHints: $parameterHints, hover: $hover, contextMenu: $contextMenu, mouseWheelZoom: $mouseWheelZoom, roundedSelection: $roundedSelection, selectionHighlight: $selectionHighlight, overviewRulerBorder: $overviewRulerBorder, renderControlCharacters: $renderControlCharacters, disableLayerHinting: $disableLayerHinting, disableMonospaceOptimizations: $disableMonospaceOptimizations)';
+    return 'EditorOptions(language: $language, theme: $theme, fontSize: $fontSize, fontFamily: $fontFamily, lineHeight: $lineHeight, wordWrap: $wordWrap, minimap: $minimap, lineNumbers: $lineNumbers, rulers: $rulers, tabSize: $tabSize, insertSpaces: $insertSpaces, readOnly: $readOnly, automaticLayout: $automaticLayout, padding: $padding, scrollBeyondLastLine: $scrollBeyondLastLine, smoothScrolling: $smoothScrolling, cursorBlinking: $cursorBlinking, cursorStyle: $cursorStyle, renderWhitespace: $renderWhitespace, bracketPairColorization: $bracketPairColorization, autoClosingBrackets: $autoClosingBrackets, autoClosingQuotes: $autoClosingQuotes, formatOnPaste: $formatOnPaste, formatOnType: $formatOnType, quickSuggestions: $quickSuggestions, fontLigatures: $fontLigatures, parameterHints: $parameterHints, hover: $hover, contextMenu: $contextMenu, mouseWheelZoom: $mouseWheelZoom, roundedSelection: $roundedSelection, selectionHighlight: $selectionHighlight, overviewRulerBorder: $overviewRulerBorder, renderControlCharacters: $renderControlCharacters, disableLayerHinting: $disableLayerHinting, disableMonospaceOptimizations: $disableMonospaceOptimizations, initialValue: $initialValue)';
   }
 }
 
@@ -1141,7 +1161,8 @@ abstract mixin class _$EditorOptionsCopyWith<$Res>
       bool overviewRulerBorder,
       bool renderControlCharacters,
       bool disableLayerHinting,
-      bool disableMonospaceOptimizations});
+      bool disableMonospaceOptimizations,
+      String? initialValue});
 }
 
 /// @nodoc
@@ -1193,6 +1214,7 @@ class __$EditorOptionsCopyWithImpl<$Res>
     Object? renderControlCharacters = null,
     Object? disableLayerHinting = null,
     Object? disableMonospaceOptimizations = null,
+    Object? initialValue = freezed,
   }) {
     return _then(_EditorOptions(
       language: null == language
@@ -1339,6 +1361,10 @@ class __$EditorOptionsCopyWithImpl<$Res>
           ? _self.disableMonospaceOptimizations
           : disableMonospaceOptimizations // ignore: cast_nullable_to_non_nullable
               as bool,
+      initialValue: freezed == initialValue
+          ? _self.initialValue
+          : initialValue // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }

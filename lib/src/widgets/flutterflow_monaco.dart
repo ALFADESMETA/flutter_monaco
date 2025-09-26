@@ -47,6 +47,7 @@ class _FlutterFlowMonacoState extends State<FlutterFlowMonaco> {
         lineNumbers: widget.showLineNumbers ?? true,
         minimap: widget.showMinimap ?? true,
         readOnly: widget.readOnly ?? false,
+        initialValue: widget.initialCode,
       );
 
   MonacoLanguage _parseLanguage(String lang) {
@@ -100,7 +101,7 @@ class _FlutterFlowMonacoState extends State<FlutterFlowMonaco> {
         height: widget.height ?? 400,
         color: const Color(0xFF1e1e1e),
         child: const Center(
-          child: const Text(
+          child: Text(
             'Monaco not available: Web platform requires internet connection',
             style: TextStyle(color: Colors.red),
             textAlign: TextAlign.center,
@@ -114,7 +115,6 @@ class _FlutterFlowMonacoState extends State<FlutterFlowMonaco> {
         width: widget.width,
         height: widget.height ?? 400,
         options: _options,
-        initialCode: widget.initialCode,
       );
     } else {
       return Container(
@@ -136,13 +136,11 @@ class _WebMonacoEditor extends StatefulWidget {
   final double? width;
   final double height;
   final EditorOptions options;
-  final String? initialCode;
 
   const _WebMonacoEditor({
     this.width,
     required this.height,
     required this.options,
-    this.initialCode,
   });
 
   @override
@@ -174,7 +172,15 @@ class _WebMonacoEditorState extends State<_WebMonacoEditor> {
       return SizedBox(
         width: widget.width,
         height: widget.height,
-        child: const ColoredBox(color: Color(0xFF1e1e1e)),
+        child: const ColoredBox(
+          color: Color(0xFF1e1e1e),
+          child: Center(
+            child: CircularProgressIndicator(
+              color: Colors.white70,
+              strokeWidth: 2,
+            ),
+          ),
+        ),
       );
     }
 
