@@ -1,11 +1,8 @@
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 
-// Conditional imports
 import '../models/editor_options.dart';
 import '../models/monaco_enums.dart';
-
-// Only import native controller on non-web
 import '../core/monaco_controller.dart' if (dart.library.html) 'dart:html';
 import '../platform/web/monaco_web.dart';
 
@@ -22,7 +19,12 @@ class FlutterFlowMonaco extends StatefulWidget {
     this.showMinimap,
     this.readOnly,
     this.scrollbarSize,
+    this.scrollbarRadius,
+    this.scrollbarColor,
+    this.scrollbarHoverColor,
+    this.scrollbarTrackColor,
     this.transparentBackground,
+    this.backgroundColor,
   });
 
   final double? width;
@@ -35,7 +37,12 @@ class FlutterFlowMonaco extends StatefulWidget {
   final bool? showMinimap;
   final bool? readOnly;
   final int? scrollbarSize;
+  final int? scrollbarRadius;
+  final String? scrollbarColor;
+  final String? scrollbarHoverColor;
+  final String? scrollbarTrackColor;
   final bool? transparentBackground;
+  final String? backgroundColor;
 
   @override
   State<FlutterFlowMonaco> createState() => _FlutterFlowMonacoState();
@@ -53,7 +60,12 @@ class _FlutterFlowMonacoState extends State<FlutterFlowMonaco> {
         readOnly: widget.readOnly ?? false,
         initialValue: widget.initialCode,
         scrollbarSize: widget.scrollbarSize ?? 8,
+        scrollbarRadius: widget.scrollbarRadius ?? 4,
+        scrollbarColor: widget.scrollbarColor,
+        scrollbarHoverColor: widget.scrollbarHoverColor,
+        scrollbarTrackColor: widget.scrollbarTrackColor,
         transparentBackground: widget.transparentBackground ?? false,
+        backgroundColor: widget.backgroundColor,
       );
 
   MonacoLanguage _parseLanguage(String lang) {

@@ -42,10 +42,8 @@ class MonacoWeb implements MonacoPlatformInterface {
 
   @override
   Future<void> initialize() async {
-    // Check if Monaco actually exists in the browser (not just our flag)
     final monacoExists = monaco != null;
     
-    // Reset state if hot reload happened (flag says loaded but Monaco is gone)
     if (_isMonacoLoaded && !monacoExists) {
       _isMonacoLoaded = false;
       _monacoLoadCompleter = null;
@@ -58,13 +56,11 @@ class MonacoWeb implements MonacoPlatformInterface {
   }
 
   Future<void> _loadMonacoEditor() async {
-    // Create new completer if needed
     _monacoLoadCompleter ??= Completer<void>();
     
     if (_monacoLoadCompleter!.isCompleted) return;
 
     try {
-      // If Monaco already loaded, just complete
       if (monaco != null) {
         if (!_monacoLoadCompleter!.isCompleted) {
           _monacoLoadCompleter!.complete();
@@ -72,11 +68,9 @@ class MonacoWeb implements MonacoPlatformInterface {
         return;
       }
 
-      // Check if Monaco scripts already in page
       final scriptsExist = web.document.querySelector('script[src*="monaco-editor"]') != null;
       
       if (!scriptsExist) {
-        // Create require config
         final configScript = web.document.createElement('script') as web.HTMLScriptElement;
         configScript.text = '''
           var require = { 
@@ -87,7 +81,6 @@ class MonacoWeb implements MonacoPlatformInterface {
         ''';
         web.document.head!.appendChild(configScript);
 
-        // Load Monaco loader
         final loaderScript = web.document.createElement('script') as web.HTMLScriptElement;
         loaderScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs/loader.js';
         
@@ -99,7 +92,6 @@ class MonacoWeb implements MonacoPlatformInterface {
         await loaderCompleter.future;
       }
 
-      // Check if require exists before calling it (hot reload safety)
       try {
         final editorCompleter = Completer<void>();
         require(
@@ -108,7 +100,6 @@ class MonacoWeb implements MonacoPlatformInterface {
         );
         await editorCompleter.future;
       } catch (e) {
-        // require doesn't exist (hot reload wiped it), just complete
         debugPrint('[Monaco] require not available, completing anyway: $e');
       }
       
@@ -140,7 +131,6 @@ class MonacoWeb implements MonacoPlatformInterface {
   Future<void> dispose() async {}
 }
 
-/// Web-specific Monaco Editor widget
 class MonacoWebWidget extends StatefulWidget {
   final MonacoController? controller;
   final EditorOptions options;
@@ -170,11 +160,9 @@ class _MonacoWebWidgetState extends State<MonacoWebWidget> {
     if (_isRegistered) return;
 
     try {
-      // Register the view factory for HtmlElementView
       ui_web.platformViewRegistry.registerViewFactory(
         _viewType,
         (int viewId) {
-          // Create container that respects parent size
           final container = web.document.createElement('div') as web.HTMLDivElement;
           container.id = 'monaco-container-$viewId';
           container.style.width = '100%';
@@ -182,7 +170,15 @@ class _MonacoWebWidgetState extends State<MonacoWebWidget> {
           container.style.position = 'relative';
           container.style.overflow = 'hidden';
           
-          // Initialize Monaco after a brief delay to ensure DOM is ready
+          // Set container background
+          if (widget.options.backgroundColor != null) {
+            container.style.backgroundColor = widget.options.backgroundColor!;
+          } else if (!widget.options.transparentBackground) {
+            container.style.backgroundColor = widget.options.theme == MonacoTheme.vs 
+                ? '#FFFFFF' 
+                : '#1E1E1E';
+          }
+          
           Future.delayed(const Duration(milliseconds: 100), () {
             if (mounted) {
               _createEditor(container);
@@ -201,7 +197,6 @@ class _MonacoWebWidgetState extends State<MonacoWebWidget> {
 
   void _createEditor(web.HTMLDivElement container) {
     try {
-      // Inject custom CSS for scrollbar and transparency
       _injectCustomStyles(container.id);
 
       final options = {
@@ -229,7 +224,6 @@ class _MonacoWebWidgetState extends State<MonacoWebWidget> {
 
       _editor = monacoEditor.create(container, options);
       
-      // Clear initial selection
       final model = _editor!.getModel();
       _editor!.setSelection(const {
         'startLineNumber': 1,
@@ -247,22 +241,26 @@ class _MonacoWebWidgetState extends State<MonacoWebWidget> {
   void _injectCustomStyles(String containerId) {
     final styleId = 'monaco-custom-style-$containerId';
     
-    // Don't inject if already exists
     if (web.document.getElementById(styleId) != null) return;
     
     final style = web.document.createElement('style') as web.HTMLStyleElement;
     style.id = styleId;
     
-    // Build CSS based on options
-    final scrollbarColor = widget.options.theme == MonacoTheme.vs 
-        ? 'rgba(0, 0, 0, 0.3)' 
-        : 'rgba(255, 255, 255, 0.3)';
-    final scrollbarHoverColor = widget.options.theme == MonacoTheme.vs 
-        ? 'rgba(0, 0, 0, 0.5)' 
-        : 'rgba(255, 255, 255, 0.5)';
+    // Get colors based on theme or custom values
+    final scrollbarColor = widget.options.scrollbarColor ?? 
+        (widget.options.theme == MonacoTheme.vs 
+            ? 'rgba(0, 0, 0, 0.3)' 
+            : 'rgba(255, 255, 255, 0.3)');
+    
+    final scrollbarHoverColor = widget.options.scrollbarHoverColor ?? 
+        (widget.options.theme == MonacoTheme.vs 
+            ? 'rgba(0, 0, 0, 0.5)' 
+            : 'rgba(255, 255, 255, 0.5)');
+    
+    final scrollbarTrackColor = widget.options.scrollbarTrackColor ?? 'transparent';
     
     style.textContent = '''
-      /* Custom thin scrollbar */
+      /* Custom scrollbar */
       #$containerId ::-webkit-scrollbar {
         width: ${widget.options.scrollbarSize}px;
         height: ${widget.options.scrollbarSize}px;
@@ -270,7 +268,7 @@ class _MonacoWebWidgetState extends State<MonacoWebWidget> {
       
       #$containerId ::-webkit-scrollbar-thumb {
         background: $scrollbarColor;
-        border-radius: ${widget.options.scrollbarSize ~/ 2}px;
+        border-radius: ${widget.options.scrollbarRadius}px;
       }
       
       #$containerId ::-webkit-scrollbar-thumb:hover {
@@ -278,25 +276,28 @@ class _MonacoWebWidgetState extends State<MonacoWebWidget> {
       }
       
       #$containerId ::-webkit-scrollbar-track {
-        background: transparent;
+        background: $scrollbarTrackColor;
       }
       
-      /* Monaco scrollbar override */
       #$containerId .monaco-scrollable-element > .scrollbar {
         width: ${widget.options.scrollbarSize}px !important;
         height: ${widget.options.scrollbarSize}px !important;
       }
       
       #$containerId .monaco-scrollable-element > .scrollbar > .slider {
-        border-radius: ${widget.options.scrollbarSize ~/ 2}px !important;
+        border-radius: ${widget.options.scrollbarRadius}px !important;
       }
       
-      /* Transparent background if enabled */
       ${widget.options.transparentBackground ? '''
       #$containerId .monaco-editor,
       #$containerId .monaco-editor-background,
       #$containerId .monaco-editor .margin {
         background: transparent !important;
+      }
+      ''' : widget.options.backgroundColor != null ? '''
+      #$containerId .monaco-editor,
+      #$containerId .monaco-editor-background {
+        background: ${widget.options.backgroundColor} !important;
       }
       ''' : ''}
     ''';
@@ -317,8 +318,6 @@ class _MonacoWebWidgetState extends State<MonacoWebWidget> {
     if (_editor == null) return;
 
     final model = _editor!.getModel();
-    
-    // Listen to Monaco's content changes
     model.onDidChangeContent((() {
       if (mounted) {
         debugPrint('[Monaco Web] Content changed');
@@ -328,10 +327,7 @@ class _MonacoWebWidgetState extends State<MonacoWebWidget> {
 
   @override
   Widget build(BuildContext context) {
-    // Return HtmlElementView that respects parent container size
-    return HtmlElementView(
-      viewType: _viewType,
-    );
+    return HtmlElementView(viewType: _viewType);
   }
 
   @override

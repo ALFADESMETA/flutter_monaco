@@ -47,8 +47,14 @@ sealed class EditorOptions with _$EditorOptions {
     @Default(false) bool disableLayerHinting,
     @Default(false) bool disableMonospaceOptimizations,
     String? initialValue,
+    // Scrollbar customization
     @Default(8) int scrollbarSize,
+    @Default(4) int scrollbarRadius,
+    String? scrollbarColor,
+    String? scrollbarHoverColor,
+    String? scrollbarTrackColor,
     @Default(false) bool transparentBackground,
+    String? backgroundColor,
   }) = _EditorOptions;
 
   const EditorOptions._();
@@ -108,8 +114,13 @@ sealed class EditorOptions with _$EditorOptions {
           json.getBool('disableMonospaceOptimizations', defaultValue: false),
       initialValue: json.tryGetString('initialValue'),
       scrollbarSize: json.getInt('scrollbarSize', defaultValue: 8),
+      scrollbarRadius: json.getInt('scrollbarRadius', defaultValue: 4),
+      scrollbarColor: json.tryGetString('scrollbarColor'),
+      scrollbarHoverColor: json.tryGetString('scrollbarHoverColor'),
+      scrollbarTrackColor: json.tryGetString('scrollbarTrackColor'),
       transparentBackground:
           json.getBool('transparentBackground', defaultValue: false),
+      backgroundColor: json.tryGetString('backgroundColor'),
     );
   }
 
