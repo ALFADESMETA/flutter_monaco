@@ -201,6 +201,9 @@ class _MonacoWebWidgetState extends State<MonacoWebWidget> {
 
   void _createEditor(web.HTMLDivElement container) {
     try {
+      // Inject custom CSS for scrollbar and transparency
+      _injectCustomStyles(container.id);
+
       final options = {
         'value': widget.options.initialValue ?? '// Monaco Editor for Web\nconsole.log("Hello from Monaco!");',
         'language': widget.options.language.id,
@@ -215,6 +218,13 @@ class _MonacoWebWidgetState extends State<MonacoWebWidget> {
         'renderLineHighlight': 'none',
         'hideCursorInOverviewRuler': true,
         'overviewRulerBorder': false,
+        'scrollbar': {
+          'vertical': 'visible',
+          'horizontal': 'visible',
+          'verticalScrollbarSize': widget.options.scrollbarSize,
+          'horizontalScrollbarSize': widget.options.scrollbarSize,
+          'useShadows': false,
+        }.jsify(),
       }.jsify() as JSObject;
 
       _editor = monacoEditor.create(container, options);
@@ -232,6 +242,66 @@ class _MonacoWebWidgetState extends State<MonacoWebWidget> {
     } catch (e) {
       debugPrint('Error creating Monaco editor: $e');
     }
+  }
+
+  void _injectCustomStyles(String containerId) {
+    final styleId = 'monaco-custom-style-$containerId';
+    
+    // Don't inject if already exists
+    if (web.document.getElementById(styleId) != null) return;
+    
+    final style = web.document.createElement('style') as web.HTMLStyleElement;
+    style.id = styleId;
+    
+    // Build CSS based on options
+    final scrollbarColor = widget.options.theme == MonacoTheme.vs 
+        ? 'rgba(0, 0, 0, 0.3)' 
+        : 'rgba(255, 255, 255, 0.3)';
+    final scrollbarHoverColor = widget.options.theme == MonacoTheme.vs 
+        ? 'rgba(0, 0, 0, 0.5)' 
+        : 'rgba(255, 255, 255, 0.5)';
+    
+    style.textContent = '''
+      /* Custom thin scrollbar */
+      #$containerId ::-webkit-scrollbar {
+        width: ${widget.options.scrollbarSize}px;
+        height: ${widget.options.scrollbarSize}px;
+      }
+      
+      #$containerId ::-webkit-scrollbar-thumb {
+        background: $scrollbarColor;
+        border-radius: ${widget.options.scrollbarSize ~/ 2}px;
+      }
+      
+      #$containerId ::-webkit-scrollbar-thumb:hover {
+        background: $scrollbarHoverColor;
+      }
+      
+      #$containerId ::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      
+      /* Monaco scrollbar override */
+      #$containerId .monaco-scrollable-element > .scrollbar {
+        width: ${widget.options.scrollbarSize}px !important;
+        height: ${widget.options.scrollbarSize}px !important;
+      }
+      
+      #$containerId .monaco-scrollable-element > .scrollbar > .slider {
+        border-radius: ${widget.options.scrollbarSize ~/ 2}px !important;
+      }
+      
+      /* Transparent background if enabled */
+      ${widget.options.transparentBackground ? '''
+      #$containerId .monaco-editor,
+      #$containerId .monaco-editor-background,
+      #$containerId .monaco-editor .margin {
+        background: transparent !important;
+      }
+      ''' : ''}
+    ''';
+    
+    web.document.head!.appendChild(style);
   }
 
   String _getThemeId(MonacoTheme theme) {

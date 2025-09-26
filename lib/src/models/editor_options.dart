@@ -47,6 +47,8 @@ sealed class EditorOptions with _$EditorOptions {
     @Default(false) bool disableLayerHinting,
     @Default(false) bool disableMonospaceOptimizations,
     String? initialValue,
+    @Default(8) int scrollbarSize,
+    @Default(false) bool transparentBackground,
   }) = _EditorOptions;
 
   const EditorOptions._();
@@ -105,6 +107,9 @@ sealed class EditorOptions with _$EditorOptions {
       disableMonospaceOptimizations:
           json.getBool('disableMonospaceOptimizations', defaultValue: false),
       initialValue: json.tryGetString('initialValue'),
+      scrollbarSize: json.getInt('scrollbarSize', defaultValue: 8),
+      transparentBackground:
+          json.getBool('transparentBackground', defaultValue: false),
     );
   }
 
@@ -146,6 +151,13 @@ sealed class EditorOptions with _$EditorOptions {
       'disableLayerHinting': disableLayerHinting,
       'disableMonospaceOptimizations': disableMonospaceOptimizations,
       if (initialValue != null) 'value': initialValue,
+      'scrollbar': {
+        'vertical': 'visible',
+        'horizontal': 'visible',
+        'verticalScrollbarSize': scrollbarSize,
+        'horizontalScrollbarSize': scrollbarSize,
+        'useShadows': false,
+      },
     };
   }
 }

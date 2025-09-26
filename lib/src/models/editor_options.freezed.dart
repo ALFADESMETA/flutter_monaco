@@ -51,6 +51,8 @@ mixin _$EditorOptions {
   bool get disableLayerHinting;
   bool get disableMonospaceOptimizations;
   String? get initialValue;
+  int get scrollbarSize;
+  bool get transparentBackground;
 
   /// Create a copy of EditorOptions
   /// with the given fields replaced by the non-null parameter values.
@@ -125,8 +127,7 @@ mixin _$EditorOptions {
                 other.selectionHighlight == selectionHighlight) &&
             (identical(other.overviewRulerBorder, overviewRulerBorder) ||
                 other.overviewRulerBorder == overviewRulerBorder) &&
-            (identical(
-                    other.renderControlCharacters, renderControlCharacters) ||
+            (identical(other.renderControlCharacters, renderControlCharacters) ||
                 other.renderControlCharacters == renderControlCharacters) &&
             (identical(other.disableLayerHinting, disableLayerHinting) ||
                 other.disableLayerHinting == disableLayerHinting) &&
@@ -135,7 +136,11 @@ mixin _$EditorOptions {
                 other.disableMonospaceOptimizations ==
                     disableMonospaceOptimizations) &&
             (identical(other.initialValue, initialValue) ||
-                other.initialValue == initialValue));
+                other.initialValue == initialValue) &&
+            (identical(other.scrollbarSize, scrollbarSize) ||
+                other.scrollbarSize == scrollbarSize) &&
+            (identical(other.transparentBackground, transparentBackground) ||
+                other.transparentBackground == transparentBackground));
   }
 
   @override
@@ -177,12 +182,14 @@ mixin _$EditorOptions {
         renderControlCharacters,
         disableLayerHinting,
         disableMonospaceOptimizations,
-        initialValue
+        initialValue,
+        scrollbarSize,
+        transparentBackground
       ]);
 
   @override
   String toString() {
-    return 'EditorOptions(language: $language, theme: $theme, fontSize: $fontSize, fontFamily: $fontFamily, lineHeight: $lineHeight, wordWrap: $wordWrap, minimap: $minimap, lineNumbers: $lineNumbers, rulers: $rulers, tabSize: $tabSize, insertSpaces: $insertSpaces, readOnly: $readOnly, automaticLayout: $automaticLayout, padding: $padding, scrollBeyondLastLine: $scrollBeyondLastLine, smoothScrolling: $smoothScrolling, cursorBlinking: $cursorBlinking, cursorStyle: $cursorStyle, renderWhitespace: $renderWhitespace, bracketPairColorization: $bracketPairColorization, autoClosingBrackets: $autoClosingBrackets, autoClosingQuotes: $autoClosingQuotes, formatOnPaste: $formatOnPaste, formatOnType: $formatOnType, quickSuggestions: $quickSuggestions, fontLigatures: $fontLigatures, parameterHints: $parameterHints, hover: $hover, contextMenu: $contextMenu, mouseWheelZoom: $mouseWheelZoom, roundedSelection: $roundedSelection, selectionHighlight: $selectionHighlight, overviewRulerBorder: $overviewRulerBorder, renderControlCharacters: $renderControlCharacters, disableLayerHinting: $disableLayerHinting, disableMonospaceOptimizations: $disableMonospaceOptimizations, initialValue: $initialValue)';
+    return 'EditorOptions(language: $language, theme: $theme, fontSize: $fontSize, fontFamily: $fontFamily, lineHeight: $lineHeight, wordWrap: $wordWrap, minimap: $minimap, lineNumbers: $lineNumbers, rulers: $rulers, tabSize: $tabSize, insertSpaces: $insertSpaces, readOnly: $readOnly, automaticLayout: $automaticLayout, padding: $padding, scrollBeyondLastLine: $scrollBeyondLastLine, smoothScrolling: $smoothScrolling, cursorBlinking: $cursorBlinking, cursorStyle: $cursorStyle, renderWhitespace: $renderWhitespace, bracketPairColorization: $bracketPairColorization, autoClosingBrackets: $autoClosingBrackets, autoClosingQuotes: $autoClosingQuotes, formatOnPaste: $formatOnPaste, formatOnType: $formatOnType, quickSuggestions: $quickSuggestions, fontLigatures: $fontLigatures, parameterHints: $parameterHints, hover: $hover, contextMenu: $contextMenu, mouseWheelZoom: $mouseWheelZoom, roundedSelection: $roundedSelection, selectionHighlight: $selectionHighlight, overviewRulerBorder: $overviewRulerBorder, renderControlCharacters: $renderControlCharacters, disableLayerHinting: $disableLayerHinting, disableMonospaceOptimizations: $disableMonospaceOptimizations, initialValue: $initialValue, scrollbarSize: $scrollbarSize, transparentBackground: $transparentBackground)';
   }
 }
 
@@ -229,7 +236,9 @@ abstract mixin class $EditorOptionsCopyWith<$Res> {
       bool renderControlCharacters,
       bool disableLayerHinting,
       bool disableMonospaceOptimizations,
-      String? initialValue});
+      String? initialValue,
+      int scrollbarSize,
+      bool transparentBackground});
 }
 
 /// @nodoc
@@ -282,6 +291,8 @@ class _$EditorOptionsCopyWithImpl<$Res>
     Object? disableLayerHinting = null,
     Object? disableMonospaceOptimizations = null,
     Object? initialValue = freezed,
+    Object? scrollbarSize = null,
+    Object? transparentBackground = null,
   }) {
     return _then(_self.copyWith(
       language: null == language
@@ -432,6 +443,14 @@ class _$EditorOptionsCopyWithImpl<$Res>
           ? _self.initialValue
           : initialValue // ignore: cast_nullable_to_non_nullable
               as String?,
+      scrollbarSize: null == scrollbarSize
+          ? _self.scrollbarSize
+          : scrollbarSize // ignore: cast_nullable_to_non_nullable
+              as int,
+      transparentBackground: null == transparentBackground
+          ? _self.transparentBackground
+          : transparentBackground // ignore: cast_nullable_to_non_nullable
+              as bool,
     ));
   }
 }
@@ -564,7 +583,9 @@ extension EditorOptionsPatterns on EditorOptions {
             bool renderControlCharacters,
             bool disableLayerHinting,
             bool disableMonospaceOptimizations,
-            String? initialValue)?
+            String? initialValue,
+            int scrollbarSize,
+            bool transparentBackground)?
         $default, {
     required TResult orElse(),
   }) {
@@ -608,7 +629,9 @@ extension EditorOptionsPatterns on EditorOptions {
             _that.renderControlCharacters,
             _that.disableLayerHinting,
             _that.disableMonospaceOptimizations,
-            _that.initialValue);
+            _that.initialValue,
+            _that.scrollbarSize,
+            _that.transparentBackground);
       case _:
         return orElse();
     }
@@ -666,7 +689,9 @@ extension EditorOptionsPatterns on EditorOptions {
             bool renderControlCharacters,
             bool disableLayerHinting,
             bool disableMonospaceOptimizations,
-            String? initialValue)
+            String? initialValue,
+            int scrollbarSize,
+            bool transparentBackground)
         $default,
   ) {
     final _that = this;
@@ -709,7 +734,9 @@ extension EditorOptionsPatterns on EditorOptions {
             _that.renderControlCharacters,
             _that.disableLayerHinting,
             _that.disableMonospaceOptimizations,
-            _that.initialValue);
+            _that.initialValue,
+            _that.scrollbarSize,
+            _that.transparentBackground);
     }
   }
 
@@ -764,7 +791,9 @@ extension EditorOptionsPatterns on EditorOptions {
             bool renderControlCharacters,
             bool disableLayerHinting,
             bool disableMonospaceOptimizations,
-            String? initialValue)?
+            String? initialValue,
+            int scrollbarSize,
+            bool transparentBackground)?
         $default,
   ) {
     final _that = this;
@@ -807,7 +836,9 @@ extension EditorOptionsPatterns on EditorOptions {
             _that.renderControlCharacters,
             _that.disableLayerHinting,
             _that.disableMonospaceOptimizations,
-            _that.initialValue);
+            _that.initialValue,
+            _that.scrollbarSize,
+            _that.transparentBackground);
       case _:
         return null;
     }
@@ -854,7 +885,9 @@ class _EditorOptions extends EditorOptions {
       this.renderControlCharacters = false,
       this.disableLayerHinting = false,
       this.disableMonospaceOptimizations = false,
-      this.initialValue})
+      this.initialValue,
+      this.scrollbarSize = 8,
+      this.transparentBackground = false})
       : _rulers = rulers,
         _padding = padding,
         super._();
@@ -982,6 +1015,12 @@ class _EditorOptions extends EditorOptions {
   final bool disableMonospaceOptimizations;
   @override
   final String? initialValue;
+  @override
+  @JsonKey()
+  final int scrollbarSize;
+  @override
+  @JsonKey()
+  final bool transparentBackground;
 
   /// Create a copy of EditorOptions
   /// with the given fields replaced by the non-null parameter values.
@@ -1056,8 +1095,7 @@ class _EditorOptions extends EditorOptions {
                 other.selectionHighlight == selectionHighlight) &&
             (identical(other.overviewRulerBorder, overviewRulerBorder) ||
                 other.overviewRulerBorder == overviewRulerBorder) &&
-            (identical(
-                    other.renderControlCharacters, renderControlCharacters) ||
+            (identical(other.renderControlCharacters, renderControlCharacters) ||
                 other.renderControlCharacters == renderControlCharacters) &&
             (identical(other.disableLayerHinting, disableLayerHinting) ||
                 other.disableLayerHinting == disableLayerHinting) &&
@@ -1066,7 +1104,11 @@ class _EditorOptions extends EditorOptions {
                 other.disableMonospaceOptimizations ==
                     disableMonospaceOptimizations) &&
             (identical(other.initialValue, initialValue) ||
-                other.initialValue == initialValue));
+                other.initialValue == initialValue) &&
+            (identical(other.scrollbarSize, scrollbarSize) ||
+                other.scrollbarSize == scrollbarSize) &&
+            (identical(other.transparentBackground, transparentBackground) ||
+                other.transparentBackground == transparentBackground));
   }
 
   @override
@@ -1108,12 +1150,14 @@ class _EditorOptions extends EditorOptions {
         renderControlCharacters,
         disableLayerHinting,
         disableMonospaceOptimizations,
-        initialValue
+        initialValue,
+        scrollbarSize,
+        transparentBackground
       ]);
 
   @override
   String toString() {
-    return 'EditorOptions(language: $language, theme: $theme, fontSize: $fontSize, fontFamily: $fontFamily, lineHeight: $lineHeight, wordWrap: $wordWrap, minimap: $minimap, lineNumbers: $lineNumbers, rulers: $rulers, tabSize: $tabSize, insertSpaces: $insertSpaces, readOnly: $readOnly, automaticLayout: $automaticLayout, padding: $padding, scrollBeyondLastLine: $scrollBeyondLastLine, smoothScrolling: $smoothScrolling, cursorBlinking: $cursorBlinking, cursorStyle: $cursorStyle, renderWhitespace: $renderWhitespace, bracketPairColorization: $bracketPairColorization, autoClosingBrackets: $autoClosingBrackets, autoClosingQuotes: $autoClosingQuotes, formatOnPaste: $formatOnPaste, formatOnType: $formatOnType, quickSuggestions: $quickSuggestions, fontLigatures: $fontLigatures, parameterHints: $parameterHints, hover: $hover, contextMenu: $contextMenu, mouseWheelZoom: $mouseWheelZoom, roundedSelection: $roundedSelection, selectionHighlight: $selectionHighlight, overviewRulerBorder: $overviewRulerBorder, renderControlCharacters: $renderControlCharacters, disableLayerHinting: $disableLayerHinting, disableMonospaceOptimizations: $disableMonospaceOptimizations, initialValue: $initialValue)';
+    return 'EditorOptions(language: $language, theme: $theme, fontSize: $fontSize, fontFamily: $fontFamily, lineHeight: $lineHeight, wordWrap: $wordWrap, minimap: $minimap, lineNumbers: $lineNumbers, rulers: $rulers, tabSize: $tabSize, insertSpaces: $insertSpaces, readOnly: $readOnly, automaticLayout: $automaticLayout, padding: $padding, scrollBeyondLastLine: $scrollBeyondLastLine, smoothScrolling: $smoothScrolling, cursorBlinking: $cursorBlinking, cursorStyle: $cursorStyle, renderWhitespace: $renderWhitespace, bracketPairColorization: $bracketPairColorization, autoClosingBrackets: $autoClosingBrackets, autoClosingQuotes: $autoClosingQuotes, formatOnPaste: $formatOnPaste, formatOnType: $formatOnType, quickSuggestions: $quickSuggestions, fontLigatures: $fontLigatures, parameterHints: $parameterHints, hover: $hover, contextMenu: $contextMenu, mouseWheelZoom: $mouseWheelZoom, roundedSelection: $roundedSelection, selectionHighlight: $selectionHighlight, overviewRulerBorder: $overviewRulerBorder, renderControlCharacters: $renderControlCharacters, disableLayerHinting: $disableLayerHinting, disableMonospaceOptimizations: $disableMonospaceOptimizations, initialValue: $initialValue, scrollbarSize: $scrollbarSize, transparentBackground: $transparentBackground)';
   }
 }
 
@@ -1162,7 +1206,9 @@ abstract mixin class _$EditorOptionsCopyWith<$Res>
       bool renderControlCharacters,
       bool disableLayerHinting,
       bool disableMonospaceOptimizations,
-      String? initialValue});
+      String? initialValue,
+      int scrollbarSize,
+      bool transparentBackground});
 }
 
 /// @nodoc
@@ -1215,6 +1261,8 @@ class __$EditorOptionsCopyWithImpl<$Res>
     Object? disableLayerHinting = null,
     Object? disableMonospaceOptimizations = null,
     Object? initialValue = freezed,
+    Object? scrollbarSize = null,
+    Object? transparentBackground = null,
   }) {
     return _then(_EditorOptions(
       language: null == language
@@ -1365,6 +1413,14 @@ class __$EditorOptionsCopyWithImpl<$Res>
           ? _self.initialValue
           : initialValue // ignore: cast_nullable_to_non_nullable
               as String?,
+      scrollbarSize: null == scrollbarSize
+          ? _self.scrollbarSize
+          : scrollbarSize // ignore: cast_nullable_to_non_nullable
+              as int,
+      transparentBackground: null == transparentBackground
+          ? _self.transparentBackground
+          : transparentBackground // ignore: cast_nullable_to_non_nullable
+              as bool,
     ));
   }
 }

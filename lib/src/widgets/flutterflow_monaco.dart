@@ -21,6 +21,8 @@ class FlutterFlowMonaco extends StatefulWidget {
     this.showLineNumbers,
     this.showMinimap,
     this.readOnly,
+    this.scrollbarSize,
+    this.transparentBackground,
   });
 
   final double? width;
@@ -32,6 +34,8 @@ class FlutterFlowMonaco extends StatefulWidget {
   final bool? showLineNumbers;
   final bool? showMinimap;
   final bool? readOnly;
+  final int? scrollbarSize;
+  final bool? transparentBackground;
 
   @override
   State<FlutterFlowMonaco> createState() => _FlutterFlowMonacoState();
@@ -48,6 +52,8 @@ class _FlutterFlowMonacoState extends State<FlutterFlowMonaco> {
         minimap: widget.showMinimap ?? true,
         readOnly: widget.readOnly ?? false,
         initialValue: widget.initialCode,
+        scrollbarSize: widget.scrollbarSize ?? 8,
+        transparentBackground: widget.transparentBackground ?? false,
       );
 
   MonacoLanguage _parseLanguage(String lang) {
